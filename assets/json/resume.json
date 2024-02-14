@@ -4,7 +4,6 @@
     "label": "Computer Scientist and Engineer",
     "image": "",
     "email": "gmejiama@ucsc.edu",
-    "phone": "(912) 123-4567",
     "url": "https://gmejiamtz.github.io",
     "summary": "A growing computer scientist and engineer looking forward to new opportunties.",
     "location": {
@@ -28,7 +27,7 @@
       "position": "CSE Undergraduate Student",
       "url": "https://gmejiamtz.github.io",
       "startDate": "2020-09-27",
-      "endDate": "Present",
+      "endDate": "",
       "summary": "Researching new algorithms for improving productivity in hardware design flows",
       "highlights": ["Electronic Design Automation", "VLSI/FPGA", "Hardware/Software Co-Design"]
     }
@@ -36,12 +35,11 @@
   "education": [
     {
       "institution": "University of California, Santa Cruz",
-      "location": "Santa Cruz, California",
       "url": "https://www.ucsc.edu/",
       "area": "Computer Science and Engineering",
-      "studyType": "BS",
+      "studyType": "Bachelor's of Science",
       "startDate": "2020-09-27",
-      "endDate": "Present",
+      "endDate": "",
       "courses": [
         "Logic Design with Verilog",
         "VLSI Digital Logic",
