@@ -30,9 +30,7 @@
       "startDate": "2020-09-27",
       "endDate": "Present",
       "summary": "Researching new algorithms for improving productivity in hardware design flows",
-      "highlights": ["Electronic Design Automation",
-        "VLSI/FPGA",
-        "Hardware/Software Co-Design"]
+      "highlights": ["Electronic Design Automation", "VLSI/FPGA", "Hardware/Software Co-Design"]
     }
   ],
   "education": [
@@ -44,12 +42,14 @@
       "studyType": "BS",
       "startDate": "2020-09-27",
       "endDate": "Present",
-      "courses": ["Logic Design with Verilog",
-          "VLSI Digital Logic",
-          "Open Source Hardware Design",
-          "Agile Hardware Design",
-          "Advanced Operating Systems",
-          "Embedded Systems Design"]
+      "courses": [
+        "Logic Design with Verilog",
+        "VLSI Digital Logic",
+        "Open Source Hardware Design",
+        "Agile Hardware Design",
+        "Advanced Operating Systems",
+        "Embedded Systems Design"
+      ]
     }
   ],
   "skills": [
@@ -57,11 +57,7 @@
       "name": "Verilog/SystemVerilog",
       "level": "Intermidiate",
       "icon": "fa-solid fa-hashtag",
-      "keywords": [
-        "Finite State Machines",
-        "UVM Testbenches",
-        "Object-Oriented SystemVerilog"
-      ]
+      "keywords": ["Finite State Machines", "UVM Testbenches", "Object-Oriented SystemVerilog"]
     }
   ],
   "languages": [
@@ -80,20 +76,14 @@
     {
       "name": "Digial Logic Design",
       "icon": "fa-solid fa-tag",
-      "keywords": [
-        "SystemVerilog/Verilog",
-        "Formal Verification",
-        "Memory Design",
-        "HDL Compilers",
-        "FPGA/ASIC"
-      ]
+      "keywords": ["SystemVerilog/Verilog", "Formal Verification", "Memory Design", "HDL Compilers", "FPGA/ASIC"]
     }
   ],
   "projects": [
     {
       "name": "Read Only Memory Verilog Model",
       "summary": "OpenROM, a subset of OpenRAM (memory compiler), needed a Verilog behavioral model to faciliate testing. Using Python, created a script that wrote a Verilog testbench for a read only memory. Using iVerilog and GTKWave, this behavorial model read 1 bit data and 8 bit data.",
-      "highlights": ["OpenRAM", "Python","Verilog"],
+      "highlights": ["OpenRAM", "Python", "Verilog"],
       "startDate": "2023-05-15",
       "endDate": "2023-06-015",
       "url": "https://openram.org/"
