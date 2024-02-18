@@ -2,11 +2,19 @@
 layout: page
 permalink: /teaching/
 title: teaching
-description: Materials for courses you taught. Replace this text with your description.
+description: Courses I helped teach in the past and resources for them to succeed.
 nav: true
 nav_order: 6
 ---
 
-For now, this page is assumed to be a static description of your courses. You can convert it to a collection similar to `_projects/` so that you can have a dedicated page for each course.
+Winter 2024: CSE 122/222A - Introduction to VLSI Design/Digital VLSI Design
 
-Organize your courses by years, topics, or universities, however you like!
+Fall 2023: CSE 100 - Introduction to Logic Design
+
+Spring 2023: CSE 100 - Introduction to Logic Design
+
+Winter 2023: CSE 100 - Introduction to Logic Design
+
+Fall 2022: CSE 20 - Introduction to Python Programming
+
+Winter 2022: CSE 20 - Introduction to Python Programming
