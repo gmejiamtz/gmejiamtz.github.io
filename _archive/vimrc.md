@@ -1,16 +1,19 @@
 ---
 layout: page
-permalink: /archive/vimrc
 title: My vimrc
+permalink: /archive/vimrc
 description: The .vimrc I use for editing with Vim.
-nav: false
+nav:
 ---
+
+Path to this page: {{ page.path }}
 
 ```bash
 set number
 syntax on
 set tabstop=4
-set shiftwidth=4 smarttab
+set shiftwidth=4
+smarttab
 set expandtab
 set showmatch
 set autoindent
