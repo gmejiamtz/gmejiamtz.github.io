@@ -1,6 +1,6 @@
 ---
 layout: default
-permalink: /blog/
+permalink: /timeline/
 title: Timeline
 nav: true
 nav_order: 1

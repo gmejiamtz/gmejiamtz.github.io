@@ -157,9 +157,9 @@ disqus_shortname: al-folio # put your disqus shortname
 # External sources.
 # If you have blog posts published on medium.com or other external sources,
 # you can display them in your blog by adding a link to the RSS feed.
-external_sources:
-  - name: medium.com
-    rss_url: https://medium.com/@al-folio/feed
+#external_sources:
+#  - name: medium.com
+#    rss_url: https://medium.com/@al-folio/feed
 
 # -----------------------------------------------------------------------------
 # Collections
@@ -314,7 +314,24 @@ enable_publication_badges:
 
 # Filter out certain bibtex entry keywords used internally from the bib output
 filtered_bibtex_keywords:
-  [abbr, abstract, altmetric, arxiv, bibtex_show, blog, code, html, pdf, poster, preview, selected, slides, supp, video, website]
+  [
+    abbr,
+    abstract,
+    altmetric,
+    arxiv,
+    bibtex_show,
+    blog,
+    code,
+    html,
+    pdf,
+    poster,
+    preview,
+    selected,
+    slides,
+    supp,
+    video,
+    website,
+  ]
 
 # Maximum number of authors to be shown for each publication (more authors are visible on click)
 max_author_limit: 3 # leave blank to always show all authors
