@@ -3,7 +3,6 @@ layout: post
 title: CSE 185E Poster Presentation
 date: 2023-03-07
 description: How my presentation went :)
-related-posts: false
 tags: fpga
 categories: classwork
 ---
