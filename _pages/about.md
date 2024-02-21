@@ -17,7 +17,7 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-I am current computer engineering student focusing on hardware systems and theoretical computer science.
+I am current computer engineering student focusing on hardware design and systems programming.
 My work so far has been on EDA design, mainly facilitaing memory design and verification and place and route
 of FPGAs and ASICs. Currently I am working under Professor Jose Renau on [liveHD](https://github.com/masc-ucsc/livehd),
 a compiler infrastructure for producive hardware development. For Winter 2024 I am taking CSE 123A, Engineering Project 1,
