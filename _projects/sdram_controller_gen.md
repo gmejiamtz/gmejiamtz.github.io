@@ -8,48 +8,33 @@ category: work
 related_publications: true
 ---
 
-CSE
+## Introduction
+
+The goal of this project is to take in a JSON file describing timing characteristics of a SDRAM module and
+generating a Verilog file describing the desired controller module for use on an FPGA or tapeout for an ASIC.
+Below is the dataflow of the generator from JSON to Verilog.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid path="assets/img/sdram_gen_imgs/sdram_gen_overview.png" title="Chisel Generator flow of .json file to .v file" class="img-fluid rounded z-depth-1" %}
     </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
-</div>
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    This image can also have a caption. It's like magic.
 </div>
 
-You can also put regular text between your rows of images, even citations {% cite einstein1950meaning %}.
-Say you wanted to write a bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
+A hardware generator language here is used rather than a hardware description language due to flexiblity. Verilog would
+create a single instance of an SDRAM controller and would be rigid if any changes are needed for the controller or someone
+else would like to reuse it for a different SDRAM module. My project aims at providing hobbyists a program that just needs
+them to write down key values from their SDRAM's datasheet to generate a controller for them to use.
 
-<div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
-</div>
+This is an open source Scala project and contributions are welcome! Visit the repo at: [https://github.com/gmejiamtz/sdram_controller_generator](https://github.com/gmejiamtz/sdram_controller_generator)
 
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+## Future Work
+
+Below is a list of future work for the project to take off for my liking:
+
+1. Get Data Transfer to work properly - Chisel Analog is not as mature as Verilog's inout and is causing me problems in data movement to and from the SDRAM via the controller
+
+2. Target more SDRAMs - as of now I am targetting only the Micron MT48LC1M16A1 and I believe different SDRAMs have different initialization procedures and command formats
+
+3. Create a JSON template and parser front-end - will be a future assignment as this is fairly easy to parse but the template will take time
+
+4. Implement GitHub Actions CI/CD - will require robust tests to be written and an understand of CI/CD
