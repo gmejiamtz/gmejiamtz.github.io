@@ -6,8 +6,6 @@ description: The .vimrc I use for editing with Vim.
 nav:
 ---
 
-Path to this page: {{ page.path }}
-
 ```bash
 set number
 syntax on

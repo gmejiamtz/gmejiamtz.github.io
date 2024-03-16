@@ -36,5 +36,3 @@ Below is a list of future work for the project to take off for my liking:
 2. Target more SDRAMs - as of now I am targetting only the Micron MT48LC1M16A1 and I believe different SDRAMs have different initialization procedures and command formats
 
 3. Create a JSON template and parser front-end - will be a future assignment as this is fairly easy to parse but the template will take time
-
-4. Implement GitHub Actions CI/CD - will require robust tests to be written and an understand of CI/CD
