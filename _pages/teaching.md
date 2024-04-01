@@ -7,6 +7,8 @@ nav: true
 nav_order: 6
 ---
 
+Spring 2024: CSE 125/225 - Logic Design with Verilog
+
 Winter 2024: CSE 122/222A - Introduction to VLSI Design/Digital VLSI Design
 
 Fall 2023: CSE 100 - Introduction to Logic Design
