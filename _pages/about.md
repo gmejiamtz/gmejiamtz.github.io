@@ -20,4 +20,4 @@ social: true # includes social icons at the bottom of the page
 I am current computer engineering student focusing on hardware design and systems programming.
 My work so far has been on EDA design, mainly facilitaing memory design and verification and place and route
 of FPGAs and ASICs. Currently I am working under Professor Jose Renau on [liveHD](https://github.com/masc-ucsc/livehd),
-a compiler infrastructure for producive hardware development. For Spring 2024 I am taking CSE 123B - Engineering Project II, CSE 134 - Embedded Operating Systems, and I am the tutor for CSE 125/225 - Logic Design with Verilog.
+a compiler infrastructure for producive hardware development. For Spring 2024 I am taking CSE 111 - Advanced Programming, CSE 123B - Engineering Project II, CSE 134 - Embedded Operating Systems, and I am the tutor for CSE 125/225 - Logic Design with Verilog.
