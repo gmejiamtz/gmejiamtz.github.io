@@ -3,7 +3,7 @@ layout: page
 title: Web Application SDRAM Controller Generator
 description: Webapp to deploy SDRAM controller generation to other users using the MERN stack
 img: assets/img/webapp/mern.png
-importance: 3
+importance: 4
 category: fun
 ---
 
