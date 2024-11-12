@@ -146,3 +146,59 @@ Here is a table for common 3 bit boolean functions and the corresponding seed to
 | Majority    | 11101000         |
 | Even Parity | 01101001         |
 | One Hot     | 00010110         |
+
+## Verification
+
+Given the RTL itself is simple and did not take a lot of time, most of the effort went into verification. Since Tiny Tapeout is aimed
+at those with little to no hardware design experience, it uses coco-tb, a Python framework, for the test flow. A vcd (value change dump)
+file is produced to create a waveform that is displayed in a waveform viewer of choice. During this project, a Github Codespaces was used
+to facilitate development over the web without any local installation of any tool and used the default waveform viewer provided: Surfer.
+
+### Test Design
+
+Extensive effort was spent optimizing tests. There is a main test that simply calls all other test functions. This main test thread holds
+a dictionary mapping strings to boolean integer literals as shown below.
+
+```python
+seeds = {"not": 0b01010101, "and2": 0b10001000, "or2": 0b11101110, "xor2": 0b01100110,
+            "nand2": 0b01110111, "nor2": 0b00010001, "nand3": 0b01111111,
+            "nor3": 0b00000001,"majority": 0b11101000, "even_parity": 0b01101001,
+            "one_hot":0b00010110}
+```
+
+Each test function is an async Python or co-routine that takes in 3 arguments: a "dut" argument which is the main top module as a Python class,
+"seed" which is an integer representing the function to be programmed and tested in the CLB, "sync" a boolean defaulted to false
+representing if the flip flop attached to the end of the CLB is used or bypassed. Below is the co-routine to test the NAND3 function.
+
+```python
+async def test_a_b_c_nand(dut,seed,sync=False):
+    dut._log.info(f"Start Test: A nand B nand C | Is Sync:{sync}")
+    dut.uio_in.value = seed
+    sync_mask = int(sync) << 4
+    sync_cycles = 2 if sync else 1
+    dut.ui_in.value = 0b00001000 | sync_mask
+    await ClockCycles(dut.clk,1)
+    dut.ui_in.value = 0b00000000 | sync_mask
+    await ClockCycles(dut.clk,1)
+    input_value = 0
+    while(input_value != 8):
+        dut.ui_in.value = input_value | sync_mask
+        a_value = input_value & 0b00000001
+        b_value = (input_value & 0b00000010) >> 1
+        c_value = (input_value & 0b00000100) >> 2
+        await ClockCycles(dut.clk,sync_cycles)
+        dut._log.info(
+            f"
+            A:{bin(a_value)} B:{bin(b_value)} C:{bin(c_value)} Out:{dut.uut.uo_out.value}
+            ")
+        assert dut.uo_out.value == (~(a_value & b_value & c_value) & 0b00000001)
+        input_value += 1
+    await ClockCycles(dut.clk,1)
+```
+
+Co-routines begin with logging the function to be tested. To handle synchronous selection a sync mask is created and
+bitwise OR'ed with inputs into ui_in assignments. This works since synchronous selection is an active high signal. When
+the CLB flip flop is used a 2 cycle wait is used and 1 if it bypassed since the testbench moves the clock by cycles rather than
+edges. First the seed is loaded and CLB bypassed is selected. After this sequence a while loop is ran. An assert is ran checking
+the value of the CLB compared to a Python evaluation of the function after an appropriate amount of cycles is passed. The loop
+terminates after the number 8 is reached since this means we have checked all possible arguments into the function.
