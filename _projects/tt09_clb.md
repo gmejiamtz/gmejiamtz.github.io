@@ -61,7 +61,7 @@ output and supports all 256 ternary boolean functions. Below is the logical sche
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/tt/digital_js.png" title="Top Mod Schematic" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid path="assets/img/tt/digital_js.png" title="Top Mod Schematic" class="img-fluid rounded z-depth-1" zoomable=true %}
     </div>
 </div>
 
@@ -87,7 +87,7 @@ Below is a waveform of loading in NAND3 functionality into the LUT.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/tt/nand3_vcd.png" title="NAND3 VCD" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid path="assets/img/tt/nand3_vcd.png" title="NAND3 VCD" class="img-fluid rounded z-depth-1" zoomable=true %}
     </div>
 </div>
 
@@ -168,7 +168,8 @@ seeds = {"not": 0b01010101, "and2": 0b10001000, "or2": 0b11101110, "xor2": 0b011
 
 Each test function is an async Python or co-routine that takes in 3 arguments: a "dut" argument which is the main top module as a Python class,
 "seed" which is an integer representing the function to be programmed and tested in the CLB, "sync" a boolean defaulted to false
-representing if the flip flop attached to the end of the CLB is used or bypassed. Below is the co-routine to test the NAND3 function.
+representing if the flip flop attached to the end of the CLB is used or bypassed. Note, binary boolean functions treat the MSB of the arg_i input
+as a don't care signal for this testbench. Below is the co-routine to test the NAND3 function.
 
 ```python
 async def test_a_b_c_nand(dut,seed,sync=False):
@@ -202,3 +203,103 @@ the CLB flip flop is used a 2 cycle wait is used and 1 if it bypassed since the 
 edges. First the seed is loaded and CLB bypassed is selected. After this sequence a while loop is ran. An assert is ran checking
 the value of the CLB compared to a Python evaluation of the function after an appropriate amount of cycles is passed. The loop
 terminates after the number 8 is reached since this means we have checked all possible arguments into the function.
+
+### Waveforms
+
+A total of 11 boolean functions are tested. Each function is tested for asynchronous and synchronous output for a total
+of 22 waveforms to analyze. For brevity of this report, we will analyze both the even-parity and majority functions.
+
+#### Even Parity
+
+The function for even parity is as follows:
+
+$$
+f(a,b,c) = \lnot (a \oplus b \oplus c)
+$$
+
+For the function to be satisfied, there must an even amount of 1's in the argument bus. The waveform below shows the
+asynchronous behavior of the even parity function.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/tt/even_parity_async.png" title="Even Parity Async VCD" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+
+It is shown here that when ui_in[2:0] has an even amount of 1's, the unit under test outputs a 1. This output happens immediately
+after a new input into ui_in[2:0]. Below is the synchronous behavior of the even parity function.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/tt/even_parity_sync.png" title="Even Parity Sync VCD" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+
+When ui_in[4] is asserted high and a new seed is loaded, the unit under test only outputs the function's evaluation a cycle later
+on the positive edge of the clock. We still get the same evaluation per input just with the one cycle delay.
+
+#### Majority
+
+The function for even parity is as follows:
+
+$$
+f(a,b,c) = a \land b \land \lnot c \lor a \land \lnot b \land c \lor \lnot a \land b \land c \lor a \land b \land c
+$$
+
+For the function to be satisfied, there must a majority amount of 1's out of 3 in the argument bus. The waveform below shows the
+asynchronous behavior of the majority function.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/tt/majority_async.png" title="Majority Async VCD" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+
+It is shown here that when ui_in[2:0] has 2 or 3 1's, the unit under test outputs a 1. This output happens immediately
+after a new input into ui_in[2:0] as expected. Below is the synchronous behavior of the majority function.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/tt/majority_sync.png" title="Majority Sync VCD" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+
+## Results
+
+The final design is a result of the Openlane flow to produce a GDS2 file for the fabrication process. This section reports
+area usage, cell usage, and routing statistics.
+
+## Area Usage
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/tt/asic_viewer.png" title="ASIC View" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+Schematic view of produced IC
+</div>
+
+| Utilisation (%) | Wire length (um) |
+| --------------- | ---------------- |
+| 3.600 %         | 1058             |
+
+This makes sense as this design conceptually is just an 8-bit register attached to a 8 to 1
+multiplexor with a flip flop. Above is the schematic viewer produced by the GDS Github Actions job to produce the GDS2 file.
+
+## Cell Usage
+
+| Category    | Cells                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Count |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| Fill        | [decap](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/decap/README.html) [fill](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/fill/README.html)                                                                                                                                                                                                                                                                                                                                               | 1443  |
+| Tap         | [tapvpwrvgnd](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/tapvpwrvgnd/README.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 225   |
+| Misc        | [conb](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/conb/README.html) [dlygate4sd3](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/dlygate4sd3/README.html)                                                                                                                                                                                                                                                                                                                                   | 27    |
+| Buffer      | [clkbuf](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/clkbuf/README.html) [buf](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/buf/README.html)                                                                                                                                                                                                                                                                                                                                               | 19    |
+| Multiplexer | [mux2](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/mux2/README.html) [mux4](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/mux4/README.html)                                                                                                                                                                                                                                                                                                                                                 | 11    |
+| Flip Flops  | [dfxtp](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/dfxtp/README.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 10    |
+| AND         | [and2](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/and2/README.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 9     |
+| Combo Logic | [and2b](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/and2b/README.html) [a21bo](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/a21bo/README.html) [o221a](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/o221a/README.html) [o31a](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/o31a/README.html) [o21a](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/o21a/README.html) | 6     |
+| NAND        | [nand2b](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/nand2b/README.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 1     |
+
+This breakdown of cells used again makes sense due to the simplicity of the final design. A total of 83 cells excluding
+tap and fill cells are used.
