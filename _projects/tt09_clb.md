@@ -269,7 +269,7 @@ after a new input into ui_in[2:0] as expected. Below is the synchronous behavior
 The final design is a result of the Openlane flow to produce a GDS2 file for the fabrication process. This section reports
 area usage, cell usage, and routing statistics.
 
-## Area Usage
+### Area Usage
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -287,7 +287,7 @@ Schematic view of produced IC
 This makes sense as this design conceptually is just an 8-bit register attached to a 8 to 1
 multiplexor with a flip flop. Above is the schematic viewer produced by the GDS Github Actions job to produce the GDS2 file.
 
-## Cell Usage
+### Cell Usage
 
 | Category    | Cells                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Count |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
@@ -303,3 +303,14 @@ multiplexor with a flip flop. Above is the schematic viewer produced by the GDS 
 
 This breakdown of cells used again makes sense due to the simplicity of the final design. A total of 83 cells excluding
 tap and fill cells are used.
+
+## Conclusion
+
+Despite the simplicity of this project, it was entertaining putting it all together. 256 total boolean functions is a
+deceptively bigger number of functions 3-bits can load. Additionally this project teaches one the trade offs that come
+with the decision of choosing between an ASIC or FPGA for a project. An ASIC would use up the least amount of area for
+a specific implementation. An NAND3 would only use a NAND3 cell. However your circuit can only do NAND3 functionality.
+An FPGA would allow deployment of any digital functionality. This comes at the cost of area and routing inefficiency. An
+8 to 1 mux takes up way more area than a NAND3. Routing inefficiencies stem from CLBs being pre-placed elements, placement
+on an FPGA does not aid the fact that all wiring distances are Manhattan distances (no diagonal connections). A designer would
+have to weigh the pros and cons of both to final choose which to deploy their product on.
