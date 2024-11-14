@@ -407,21 +407,24 @@ to a seperate branch for GDS Github Action workflows. Below are area usage perce
 | Buffer   | [buf](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/buf/README.html)                                                                                                                   | 3     |
 | NAND     | [nand3](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/nand3/README.html)                                                                                                               | 1     |
 
+As expected only a single NAND3 cell is used here, along with miscellaneous cells. By itself NAND3 uses 0.605% of the die with only 169
+microns for wire length. Compared to the CLB this is a 6x area improvement and 6.3x wiring improvement. Less wiring means less delay in
+data movement and possibly mean a faster clock for the ASIC design than the CLB. Area improvement means the die can be used for other
+logic or macros. However this design can only do a NAND3 function, anything else is moot. Our CLB can represent 255 other 3-bit boolean
+functions as well as control wether that function is outputted synchronously to a clock edge. However this does come at area and performance
+penalties. This showcases clearly the pros and cons to an ASIC design compared to an FPGA design. The designer must make the decision of if
+the circuit requires the performance and mass scale production to deploy it on a custom ASIC, and receive it months later. Or the designer
+may choose to deploy their circuit in the field at the cost of performance.
+
 ## Conclusion
 
 Despite the simplicity of this project, it was entertaining putting it all together. 256 total boolean functions is a
 deceptively bigger number of functions 3-bits can load. Additionally this project teaches one the trade offs that come
-with the decision of choosing between an ASIC or FPGA for a project. An ASIC would use up the least amount of area for
-a specific implementation. A NAND3 submission on Tiny Tapeout Github Actions shows a total die usage of 0.605% and a
-wire length of only 169 microns. This is a 6x area improvement and 6.3x wire improvement over the CLB implementation.
-Additionally only a NAND3 cell is used along other utility cells for a total of 27 cells before taps and fills.
-However your circuit can only do NAND3 functionality.
+with the decision of choosing between an ASIC or FPGA for a project. Most VLSI courses mention the area and performance
+penalties of FPGAs compared to a custom ASIC yet never show why. Here it is shown why. Testing too was more entertaining
+that anticipated. Given the simplicity of the project, it is simple to modularize a test structure. Especially with cocotb,
+one can utilize Python data structures to make readable tests.
 
-An FPGA would allow deployment of any digital functionality. This comes at the cost of area and routing inefficiency. An
-8 to 1 mux takes up way more area than a NAND3 as shown previously. Routing inefficiencies stem from CLBs being pre-placed
-elements, placement on an FPGA does not aid the fact that all wiring distances are Manhattan distances (no diagonal connections).
-Additionally these routing constraints harm max clock frequency as well. Given the predefined logic elements and routing paths,
-the clock can only go so fast compared to an ASIC. While this sounds like FPGAs are inferior to ASICs, the "FP" in FPGA is the
-biggest pro. To be field programmable means an engineer is able to deploy their circuit outside of a fab. Fabs take months to
-years to fabricate the integrated circuit. While there are performance gains in having a custom chip, these gains mean nothing
-if it is not deployed in a timely manner.
+## References
+
+Look Up Table image is taken from: Schlag, M. (2024). Beginning Logic Design. Retrieved from [https://escholarship.org/uc/item/9q1786xf](https://escholarship.org/uc/item/9q1786xf)
