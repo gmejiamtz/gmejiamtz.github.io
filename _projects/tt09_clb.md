@@ -266,6 +266,46 @@ after a new input into ui_in[2:0] as expected. Below is the synchronous behavior
     </div>
 </div>
 
+### Other Waveforms
+
+The final testbench dumps all 22 tests onto one vcd file. They are ordered in as written by this code body of the main test
+function:
+
+```python
+    await test_a_not(dut,seeds["not"])
+    await test_a_b_and(dut,seeds["and2"])
+    await test_a_b_or(dut,seeds["or2"])
+    await test_a_b_xor(dut,seeds["xor2"])
+    await test_a_b_nand(dut,seeds["nand2"])
+    await test_a_b_nor(dut, seeds["nor2"])
+    await test_a_b_c_nand(dut,seeds["nand3"])
+    await test_a_b_c_nor(dut,seeds["nor3"])
+    await test_a_b_c_majority(dut,seeds["majority"])
+    await test_a_b_c_even_parity(dut,seeds["even_parity"])
+    await test_a_b_c_one_hot(dut,seeds["one_hot"])
+    await test_a_not(dut,seeds["not"],True)
+    await test_a_b_and(dut,seeds["and2"],True)
+    await test_a_b_or(dut,seeds["or2"],True)
+    await test_a_b_xor(dut,seeds["xor2"],True)
+    await test_a_b_nand(dut,seeds["nand2"],True)
+    await test_a_b_nor(dut, seeds["nor2"],True)
+    await test_a_b_c_nand(dut,seeds["nand3"],True)
+    await test_a_b_c_nor(dut,seeds["nor3"],True)
+    await test_a_b_c_majority(dut,seeds["majority"],True)
+    await test_a_b_c_even_parity(dut,seeds["even_parity"],True)
+    await test_a_b_c_one_hot(dut,seeds["one_hot"],True)
+```
+
+To view all tests follow the steps below.
+
+1. Click to download the final vcd file: [tb.vcd]({% link _projects/tt09_clb/tb.vcd %})
+2. Go to [Surfer Waveform Viewer](https://app.surfer-project.org/) on your browser of choice
+3. Go to File -> Open file -> Browse -> Path to tb.vcd
+4. Click on tb under the Scope tab and add in the following signals: clk,rst_n, ui_in, uio_in, uo_out
+5. Right on ui_in, uio_in, uo_out, Format -> Binary
+6. Click on "Zoom to fit"
+7. Scroll left to see behavior
+
 ## Results
 
 The final design is a result of the Openlane flow to produce a GDS2 file for the fabrication process. This section reports
