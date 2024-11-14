@@ -6,6 +6,8 @@ img: assets/img/tt/clb.png
 importance: 3
 category: fun
 pretty_table: true
+toc:
+  sidebar: left
 ---
 
 ## Introduction
@@ -309,8 +311,16 @@ tap and fill cells are used.
 Despite the simplicity of this project, it was entertaining putting it all together. 256 total boolean functions is a
 deceptively bigger number of functions 3-bits can load. Additionally this project teaches one the trade offs that come
 with the decision of choosing between an ASIC or FPGA for a project. An ASIC would use up the least amount of area for
-a specific implementation. An NAND3 would only use a NAND3 cell. However your circuit can only do NAND3 functionality.
+a specific implementation. A NAND3 submission on Tiny Tapeout Github Actions shows a total die usage of 0.605% and a
+wire length of only 169 microns. This is a 6x area improvement and 6.3x wire improvement over the CLB implementation.
+Additionally only a NAND3 cell is used along other utility cells for a total of 27 cells before taps and fills.
+However your circuit can only do NAND3 functionality.
+
 An FPGA would allow deployment of any digital functionality. This comes at the cost of area and routing inefficiency. An
-8 to 1 mux takes up way more area than a NAND3. Routing inefficiencies stem from CLBs being pre-placed elements, placement
-on an FPGA does not aid the fact that all wiring distances are Manhattan distances (no diagonal connections). A designer would
-have to weigh the pros and cons of both to final choose which to deploy their product on.
+8 to 1 mux takes up way more area than a NAND3 as shown previously. Routing inefficiencies stem from CLBs being pre-placed
+elements, placement on an FPGA does not aid the fact that all wiring distances are Manhattan distances (no diagonal connections).
+Additionally these routing constraints harm max clock frequency as well. Given the predefined logic elements and routing paths,
+the clock can only go so fast compared to an ASIC. While this sounds like FPGAs are inferior to ASICs, the "FP" in FPGA is the
+biggest pro. To be field programmable means an engineer is able to deploy their circuit outside of a fab. Fabs take months to
+years to fabricate the integrated circuit. While there are performance gains in having a custom chip, these gains mean nothing
+if it is not deployed in a timely manner.
