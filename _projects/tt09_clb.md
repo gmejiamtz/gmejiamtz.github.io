@@ -14,7 +14,8 @@ toc:
 
 Field programmable gate arrays are integrated circuits designed to deploy digital circuits outside of the fab.
 The base of any FPGA architecture is the configurable logic block or CLB. At the base level a CLB contains a look-up
-table or LUT, a full adder, and flip flop.
+table or LUT, a full adder, and flip flop. This Tiny Tapeout design implements a simple configurable logic block with
+a 3-bit look up table.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -24,6 +25,9 @@ table or LUT, a full adder, and flip flop.
 <div class="caption">
 An example CLB complete with 4 bit LUT, full adder and FF
 </div>
+
+This document will detail a background of elements with a CLB, design choices taken in this IC's design, verification flow
+and test structure, and results of this design flow.
 
 ### Look Up Tables
 
@@ -308,10 +312,10 @@ To view all tests follow the steps below.
 
 ## Results
 
-The final design is a result of the Openlane flow to produce a GDS2 file for the fabrication process. This section reports
+The final design is a result of the Openlane flow to produce a GDSII file for the fabrication process. This section reports
 area usage, cell usage, and routing statistics.
 
-### Area Usage
+### CLB Area Usage
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -327,9 +331,9 @@ Schematic view of produced IC
 | 3.600 %         | 1058             |
 
 This makes sense as this design conceptually is just an 8-bit register attached to a 8 to 1
-multiplexor with a flip flop. Above is the schematic viewer produced by the GDS Github Actions job to produce the GDS2 file.
+multiplexor with a flip flop. Above is the schematic viewer produced by the GDS Github Actions job to produce the GDSII file.
 
-### Cell Usage
+### CLB Cell Usage
 
 | Category    | Cells                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Count |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
@@ -344,7 +348,64 @@ multiplexor with a flip flop. Above is the schematic viewer produced by the GDS 
 | NAND        | [nand2b](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/nand2b/README.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 1     |
 
 This breakdown of cells used again makes sense due to the simplicity of the final design. A total of 83 cells excluding
-tap and fill cells are used.
+tap and fill cells are used. An interesting item of note is the flip flop cell count. 10 flip-flops are easily spotted
+inside the RTL. Within the LUT3.v there the following code block:
+
+```verilog
+  reg [7:0] lookup_table_r;
+  reg out_r;
+  always @(posedge clk_i) begin
+    if(!resetn) begin
+      lookup_table_r <= '0;
+    end
+    else if (new_seed_i) begin
+      lookup_table_r <= seed_i;
+    end
+  end
+```
+
+Here is an 8 bit bus called "lookup_table_r" that is driven by a synchronous block. Openlane sees this to create an 8-bit
+flip flop register, thus this Verilog module is responsible for 8 out of the 10 flip flops. The other 2 are found in the
+top module in the following code block:
+
+```verilog
+  always @(posedge clk) begin
+    if(!rst_n) begin
+      is_sync_r <= 1'b0;
+    end else if(ui_in[3]) begin
+      is_sync_r <= ui_in[4];
+    end
+  end
+
+  //ff for a sync clk - will be a 2 cycle delay with this LUT design
+  always @(posedge clk) begin
+    if(!rst_n) begin
+      comb_out_r <= '0;
+    end else begin
+      comb_out_r <= comb_out;
+    end
+  end
+```
+
+These two synchronous blocks create the other 2 flip flops. Just by reading the RTL itself we as humans can extrapolate a total
+of 10 flip-flops used in this entire design.
+
+### NAND3 Comparison
+
+A question to be asked is how do dedicated ASICs compare final CLB. To benchmark the CLB against a NAND3 design was submitted
+to a seperate branch for GDS Github Action workflows. Below are area usage percentage and usage by cell for the NAND3 design.
+
+| Utilisation (%) | Wire length (um) |
+| --------------- | ---------------- |
+| 0.605 %         | 169              |
+
+| Category | Cells                                                                                                                                                                                                                         | Count |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| Fill     | [decap](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/decap/README.html) [fill](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/fill/README.html) | 1471  |
+| Tap      | [tapvpwrvgnd](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/tapvpwrvgnd/README.html)                                                                                                   | 225   |
+| Misc     | [conb](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/conb/README.html)                                                                                                                 | 23    |
+| Buffer   | [buf](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/buf/README.html)                                                                                                                   | 3     |
+| NAND     | [nand3](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_sc_hd/cells/nand3/README.html)                                                                                                               | 1     |
 
 ## Conclusion
 
