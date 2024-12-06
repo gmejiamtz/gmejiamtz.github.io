@@ -1,9 +1,9 @@
 ---
-layout: page
-title: My vimrc
-permalink: /archive/vimrc
-description: The .vimrc I use for editing with Vim.
-nav:
+layout: post
+title: .vimrc
+description: My .vimrc for all vim usage
+tags: setup
+categories: tutorial
 ---
 
 ```bash

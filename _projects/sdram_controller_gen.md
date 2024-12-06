@@ -5,7 +5,6 @@ description: Final project for CSE 228A - Agile Hardware Design
 img: assets/img/sdram_gen_imgs/sdram_diagram.png
 importance: 1
 category: work
-related_publications: true
 ---
 
 ## Introduction
