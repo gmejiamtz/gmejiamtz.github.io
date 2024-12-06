@@ -1,6 +1,6 @@
 ---
 layout: default
-permalink: /archive/home
+permalink: /archive/home/
 title: Archive
 nav: true
 nav_order: 2
