@@ -2,7 +2,7 @@
 layout: page
 title: projects
 permalink: /projects/
-description: A growing collection of your cool projects.
+description: Where projects that don't fit on the resume are
 nav: true
 nav_order: 1
 display_categories: [work, fun]
