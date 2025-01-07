@@ -7,6 +7,8 @@ nav: true
 nav_order: 6
 ---
 
+Winter 2025: CSE 100 - Introduction to Logic Design
+
 Fall 2024: CSE 100 - Introduction to Logic Design
 
 Spring 2024: CSE 125/225 - Logic Design with Verilog

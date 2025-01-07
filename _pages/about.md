@@ -19,4 +19,4 @@ social: true # includes social icons at the bottom of the page
 
 I am current computer engineering student focusing on hardware design and systems programming.
 My work so far has been on EDA design, mainly facilitaing memory design and verification and place and route
-of FPGAs and ASICs. Currently I am working under Professor [Dustin Richmond](https://www.dustinrichmond.com) and Professor [Jason Eshraghian](https://www.jasoneshraghian.com) on modeling DRAM cell discharge to model a spiking neural net. For Fall 2024 I am taking CSE 200 - Research and Teaching in Computer Science and Engineering, CSE 216 - Formal Methods, ECE 210 - Brain Inspired Machine Learning, and I am the teaching assistant for CSE 100 - Logic Design.
+of FPGAs and ASICs. Currently I am working under Professor [Dustin Richmond](https://www.dustinrichmond.com) and Professor [Jason Eshraghian](https://www.jasoneshraghian.com) on modeling DRAM cell discharge to model a spiking neural net. For Fall 2024 I am taking CSE 201 - Analysis of Algorithms, CSE 269 - Approximation Algorithms, CSE 293 - Verilog to Silicon, and I am the teaching assistant for CSE 100 - Logic Design.
