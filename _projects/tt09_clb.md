@@ -3,7 +3,7 @@ layout: page
 title: Simple Configurable Logic Block on Tiny Tapeout
 description: A 3 bit CLB on Sky130
 img: assets/img/tt/clb.png
-importance: 3
+importance: 1
 category: fun
 pretty_table: true
 toc:
