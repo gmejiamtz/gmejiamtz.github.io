@@ -5,6 +5,188 @@ description: A console emulator created using C++ and SDL2
 img: assets/img/game_controller.png
 importance: 4
 category: fun
+toc:
+  sidebar: left
 ---
 
-Final Project for CSE 111, code is held in a private repo...
+## Overview
+
+This is our report for the Banana Slug console emulator project for CSE 111, Advanced C++ Programming.
+
+## Contributions
+
+This section will discuss each members' contributions to the emulator.
+
+### Summary
+
+All our team did good work. In short, Duo Yu handled the memory class, controller input and gpu debugging. Larry Tran handled the emulator foundations when it was still called operating system, and debugged gpu color decoding. Tanvi Singh handled CPU function implementation and code refractoring. Gary Mejia handled Github
+maintaince and GPU foundations.
+
+### Tanvi Singh
+
+Overall, I contributed to the CPU component of the final project and created the function implementations for each function, as well as the overall class implementation of the CPU. In order to simplify the retrieval of all of the components of instructions, I implemented a function that decoded each component. My decode function was significantly simplified when I figured out that all of the R-type instructions shared the same opcode value. This allowed me to simply check if the opcode of the given instruction was the R-type opcode value, and depending on the type I would assign the funct, reg_a, reg_b, reg_c, and immediate to the corresponding values within the instruction. If the value was not applicable, like for example the R-type does not have an immediate value, then the inapplicable value would be given a value of 0 since none of the values in the document use a value of 0. While I was checking if certain values of components of an instruction match up to the values of an instruction in the document I realized a lot of the values in the code are not understandable to someone who had never seen the code before. So, I utilized enums to create appropriate names for the opcode funct values, and decode values and made the code more readable to an external party. I originally did not code the store and load functions correctly, as nothing was actually getting stored and loaded into the memory. That is when I realized I had to utilize the memory write and read functions created by Duo in order to connect the CPU with the memory. That was one major bug I overcame since before that I was struggling to figure out how the CPU and memory connect to execute instructions. Some cool C++ topics I explored in this project were the concept of enums and shared pointers which greatly improved the readability of my code as well as the connectivity of my code with other components of the project.
+
+### Duo Yu
+
+In this project, my primary contribution was the design and implementation of the memory management system. This included the development of the `Memory` class, which handles memory read and write operations, controller state updates, and permission checks for various memory regions. The key aspects of my work on the memory system are detailed below:
+
+- **Memory Initialization**
+
+  - Implemented the constructor of the `Memory` class to initialize memory from a given content source. This involves copying data into the memory space, starting from the designated address.
+
+- **Memory Access and Permission Management**
+
+  - Developed the `read` and `write` methods to handle memory access. These methods include logic for checking permissions, ensuring that read, write, and execution permissions are respected based on predefined memory regions.
+  - Implemented permission checks in the `checkPermissions` method, ensuring that memory operations comply with specified access rights for different regions (e.g., RAM, stack, VRAM, and special I/O addresses).
+
+- **Special I/O Handling**
+
+  - Integrated special I/O handling within the memory system, including reading controller data, handling standard input, and managing standard output and error streams.
+  - Implemented functionality to stop execution upon writing to a specific memory address designated for halting the system.
+
+- **Controller State Management**
+  - Added functionality to update and read the controller state, allowing for interaction between the controller hardware and memory.
+
+In addition to my primary responsibility for the memory system, I also provided significant support in debugging other critical components of the project. I assisted in identifying and resolving issues related to the GPU, ensuring proper graphical data management and optimizing GPU memory usage. I contributed to debugging CPU operations, ensuring correct and efficient instruction execution, and helped troubleshoot performance bottlenecks. Furthermore, I worked closely with the team to debug and enhance the operating system, focusing on memory management and I/O operations, which contributed to a more stable and reliable operating environment.
+
+### Larry Tran
+
+I worked on the beginning of the emulator like the gpu and trying to understand how it was going to work and tried to do some debugging. Specifically, I helped with the setup function of the memory based on the rom file and the reset sequence before it got modified. I also answered questions on discord regarding the hello_world1.slug and hello_world2.slug files in terms of how it worked, like in what it was supposed to do and how it got to the outputs listed in the tests folder by decoding some of the binary in the rom files provided.
+One thing I did on the project that I am proud of is figuring out how to display the colors properly for the gpu. Initially the bug was displaying a black screen for the image slug file and I was able to find out what the problem was by reading the documentation since I wasn’t the one that wrote code so I had no idea what was happening. After looking at some examples on youtube of how to draw to the screen on SDL, I saw that the numbers being used were from 0 to 255 and that we were only using 0 to 3 as the values in SDL_SetRenderDrawColor which was why it was black since (0,0,0) is black. The document says that 0 to 3 value was how full the color values of red, green, and blue were, so the values for setting draw color were shifted left 6 since 255 is a 8-bit number. Also one of the colors kept getting 0 as the value and it turns out the way we were getting the 2-bits for that color was wrong, which was later fixed.
+
+### Gary Mejia
+
+Most of my contributions came in helping with overall debugging and Github tasks. To begin our project I created the base
+Dockerfile and .devcontainer.json to install all the required tools for our Codespaces. Any debugging of the Dockerfile
+was done reading the creation logs when building failed. For our CI/CD, I added an additional Github Actions job to run
+the first three hello world test roms before it was required. Additionally I modified the `run_test.sh` script when I
+finished the live controller remapping feature to pipe in keyboard input into the SDL window on the headless Github
+server. Debugging this had me use some ChatGPT prompts, echo statements, and several pushes.
+
+To debug the emulator itself Duo and I would have one version with print statements and I would go through the emulator
+with GDB. Due to the nature of the instructions, we were able to print out the encoded instructions in GDB with the `p/x`
+command. Additionally to see if our reset loop properly copied data I used conditional breakpoints in GDB. For example if
+I wanted to break at our memory's `read` or `write` functions, I would set the breakpoint first, and then set the
+condition. If I wanted to break at the read function for the first three addresses, I would use the `condition` command.
+The command `condition 2 (address <= 3 && address >= 0)` would only break at `read` if we read at address 0 to 3 and
+`read`'s breakpoint is number 2 in GDB. This would help to stop excessive breaking in the debugger on common functions.
+
+## Design Choices
+
+This section will discuss design choices made by us for certain components of the emulator.
+
+### Encapsulation
+
+Most functions in components are private, good examples are the GPU and CPU. No CPU instruction is a public function, such is no GPU
+decoding function is public. This is done as we done believe that the emulator nor programmer should be able to call CPU or GPU instructions
+anywhere directly. If this happened the CPU could be forced to jump to a random address at the programmer's behest. By restricting where
+these functions are called prevent us from making small but huge mistakes by called the wrong function. Another benefit is that it shortens
+the `game_loop` emulator function. Here is where both CPU and GPU instructions should be called. Our loop here resembles the standard five
+stage CPU pipeline by calling functions called `fetch`, `decode`, `execute` but omitting the `memory` and `writeback` stages due to this
+being software.
+
+While we do need to be able to force JAL instructions at will due to a spec requirement for the beginning of the calls to the `setup` and
+`loop` routines of the emulator, this is done by having `fetch` return the encoded instruction as a `uint32_t` and decode taking in a
+`uint32_t` as an argument. A programmer is allowed to place in any `uint32_t` value into decode but this requires them knowing the exact bits
+int instruction they want to accomplish an attack of value, else they just crash the emulator. This allows us to force instructions in a more
+roundabout way, which leads to less accidental mistakes.
+
+### CPU and GPU Connectivity
+
+To connect the CPU and GPU we decided for them to point to the same Memory. By having the same memory the CPU can fill in VRAM and the GPU
+can decode it for display. This is akin to hardware sharing a memory bus for communication. With C++ this design is accomplished easily with
+shared pointers.
+
+## Extra Features
+
+This section will discuss additional features of our project not specified within the spec.
+
+### Github Codespaces
+
+There are multiple ways to facilitate cross OS development in a team. At UCSC the most popular choice is to provide virtual
+machine images to unify student's operating systems. For our introduction to systems programming course, CSE 130, often students
+are first tasked with setupping up their virtual machines prior to beginning the first assignment. The time to setup up a VM is
+rather small in the grad scheme of things but is annoying when dealing with different architectures, mainly ARM vs x86, and due
+to the process being akin to installing an OS from scratch it may be daunting to some less experienced studnets. Another choice is
+using Docker. This option is rather unpopular at UCSC, only commonly being used in our distriuted systems course, CSE 138, and most
+recently in our operating systems course, CSE 134. While the process different from creating a VM image and installing the OS, one
+may need to play around with Dockerfiles which can be scary and is akin to learning a small new language. While both options unify OS
+for students, they both require local installation of tools that are unlikely to be reused again. For this reason we opted to use Github
+Codespaces to unfiy our OS.
+
+What does Codespaces provided us that both VMs and Docker images don't. Aside from the lack of local installation, the biggest benefit is
+working off the cloud. To work we simply need a WiFi connection. This allows us to install any tools we think may be necessary for the
+emulator and remove them or remake a new codespace without taking up space from our local harddrives. While Codespaces are essentially Docker
+images on the cloud and setup would require a Dockerfile, there are many templates our there for us to use. Lucky for use our use case only
+requires a small Dockerfile. Our Dockerfile can be found at `.devcontainer/Dockerfile`. All ours does is install a base Ubuntu image on this container with zsh as the shell along with all the tools and libraries we need to complete this project. The other nice part of Codespaces
+is the use of VSCode on the cloud. Literally no local tools are required to complete this project. Below is an image of Gary writing this part of the report in VSCode for the cloud on a created Codespace.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/codespaces.png" title="Codespaces in Action" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+
+What about the SDL windows? How do these even work if this is a Docker container NOT on your local machine. This is a good question,
+we must support a GUI somehow, it is the main spec of this project. For this problem I turned to this [post](https://dev.to/konmaz/gui-in-github-codespaces-jl0) on dev.to by Konstantinos Mazgaltzidis on how to get a GUI on Github Codespaces. Another part of configuring
+a Codespace is a JSON file called devcontainer.json. This file resides along with the Dockerfile in a special directory named
+`.devcontainer`. Upon creating a codespace, Github will look in this directory for the devcontainer.json file to see if a Dockerfile is
+requested, what VSCode extensions to load into the browser version, and important for us what features to include. We want the Desktop-Lite
+feauture which will support a barebones desktop to run. Below is how we implement this into our Codespace.
+
+```json
+"features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+  },
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "desktop"
+    }
+  },
+```
+
+We forward port 6080 to display this desktop on a new tab or simple browser within VSCode itself. As shown below we are able to play
+Flappy Bird in our simple browser.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/flappy_bird.png" title="Codespaces Playing Flappy Bird" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+
+While this was not necessary for us to do, we thought it would be a nice thing to explore and play with. Skeptical at first but ending
+this project showed us that with Codespaces we may never need to install anything locally for most classes here at UCSC.
+
+### Live Controller Remapping and Github Actions with SDL
+
+Another extra feature we implemented is live controller remapping. An option to change the controller layout is to change our
+`unordermap` in our `game_loop` function but this would require recompiling the project. We think live controller remapping is a better
+option simply to do not needing to recompile every time. To remap thr controller layout the emulator must launch the `game_loop` function.
+Remapping occurs before the emulator enters the infinite while loop of the actual game loop. Players are displayed their default controller
+layout, which supports one handed play on the right hand: WASD for up, down, left, and right, 'Q' for A, 'E' for B, '1' for Start, and '3'
+for Select. This may be akward for some plays and awful for left handed people. Thus to proceed to the actual game loop, the user must press
+their button for Start. To change their layout the player must press Select. Upon pressing Select they will be prompted with which button to
+remap, if they want to change our default button A to the key of 'F' they must press 'Q' then 'F'. After this they will be reprompted to
+press Start to continue or Select to change another button.
+
+How do these remappings occur? Due to our original unordered map mapping SDL_Scancodes to ControllerButton enum values, we must poll SDL
+events. We have another SDL event polling loop dedicated to button presses and processing them for remapping. Our event loop itself is inside
+a while loop that is true until the scancode mapped to Start has been pressed, this required a function to search our scancodes to controller
+enum map inversely. If Select is pressed we enter a another part of the loop processes 2 button presses, the first to find which controller
+button to change and the second the key to map to. If a new key is selected the old mapped pair is erased from the map and the new pair is
+inserted. If a key that is already mapped to another button is pressed, then the mappings are swapped. To see an expected example see the `1.out` files in `tests/new_button_mappings` and `tests/swap_button_mappings`.
+
+A complementary extra feature alongside live button remapping is the corresponding Github Actions jobs to run regression tests. A required
+spec in this project is to have a job that at the bare minumum runs all three tests for check off of the project. We had this done at check
+off 1, but now since the user themself must input a key to enter the game loop, our regression test job had to change somehow. If we left it
+as is, we would fail due to timeouts and possibly lose up 1450 minutes of Github Action minutes without a timeout value set. Even that value
+we would be missing an important required spec for the project. We tried using GPT for this part too, however it generated new scripts which
+ended up being complex and not even work due to not many people doing similar tasks. The final solution ended up using a tool to fake
+keyboard input called `xdotool`. Our problem was to somehow send keyboard inputs to a window in a headless environment. `xdotool` allows you
+to focus on windows by searching for them. In our case we decided to search by PID as it is easy to store the PID via bash script then
+focus on the window by the number returned to by the `xdotool` search. Once this is done, we needed some made up input. By default all
+test directories for check off 1 had input files for stdin, thus we created similar files called `sdl_input.txt`. These contain character
+sequences players press. After the window is focused we loop through this file by character and send it to the window until the file inputs
+the final Start key input to enter the game loop to which the process exits. Due to all of this process being easily scriptable meant we only
+need to modify our `run_test.sh` to do these extra tasks and edit the provied `1.out` files to match our new prompts.
